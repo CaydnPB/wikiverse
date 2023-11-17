@@ -40,6 +40,7 @@ export const App = () => {
 				content: articleResponse.content,
 				tags: tagNames,
 				date: formattedDateString,
+				slug: articleResponse.slug,
 			}
 			setArticle(articleData);
 			console.log(articleData);
@@ -73,6 +74,19 @@ export const App = () => {
 		  console.log("Oh no an error! ", err);
 		}
 	};
+
+	const handleDeleteArticle = async (slug) => {
+		try {
+		  const response = await fetch(`${apiURL}/wiki/${slug}`, {
+			method: 'DELETE',
+		  });
+
+		  fetchPages();
+		  setArticle(null);
+		} catch (err) {
+		  console.log("Oh no an error! ", err);
+		}
+	};
 	
 	useEffect(() => {
 		fetchPages();
@@ -87,6 +101,7 @@ export const App = () => {
 				<Article
 				article={article}
 				onBackToWikiList={handleBackToWikiList}
+				onDeleteArticle={handleDeleteArticle}
 				/>
 			) : (
 				<>

@@ -1,6 +1,9 @@
 import React from 'react';
 
-export const Article = ({ article, onBackToWikiList }) => {
+export const Article = ({ article, onBackToWikiList, onDeleteArticle }) => {
+  const handleDeleteClick = () => {
+    onDeleteArticle(article.slug);
+  };
   return <>
       <h2>{article.title}</h2>
       <p><strong>Author: </strong>{article.author}</p>
@@ -13,5 +16,6 @@ export const Article = ({ article, onBackToWikiList }) => {
         ))}</p>
       <p><strong>Date: </strong>{article.date}</p>
       <button onClick={onBackToWikiList}>Back to Wiki List</button>
+      <button onClick={handleDeleteClick}>Delete</button>
   </>
 }
