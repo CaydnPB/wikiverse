@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Article } from './Article';
 import { PagesList } from './PagesList';
+import { CreatePageForm } from './CreatePageForm';
 
 // import and prepend the api url to any fetch calls
 import apiURL from '../api';
@@ -8,6 +9,7 @@ import apiURL from '../api';
 export const App = () => {
 	const [pages, setPages] = useState([]);
 	const [article, setArticle] = useState(null);
+	const [isAddingArticle, setIsAddingArticle] = useState(false);
 
 	async function fetchPages(){
 		try {
@@ -48,8 +50,30 @@ export const App = () => {
 
 	const handleBackToWikiList = () => {
 		setArticle(null);
-	  };
+	};
 
+	const handleAddArticleClick = () => {
+		setIsAddingArticle(true);
+	};
+
+	const handleCreatePage = async (formData) => {
+		try {
+		  const response = await fetch(`${apiURL}/wiki`, {
+			method: 'POST',
+			headers: {
+			  'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(formData),
+		  });
+		  const createdPage = await response.json();
+	
+		  setIsAddingArticle(false);
+		  fetchPages();
+		} catch (err) {
+		  console.log("Oh no an error! ", err);
+		}
+	};
+	
 	useEffect(() => {
 		fetchPages();
 	}, []);
@@ -57,7 +81,9 @@ export const App = () => {
 	return (
 		<main>
 			<h1>WikiVerse</h1>
-			{article ? (
+			{isAddingArticle ? (
+       		<CreatePageForm onCreatePage={handleCreatePage} />
+      		) : article ? (
 				<Article
 				article={article}
 				onBackToWikiList={handleBackToWikiList}
@@ -66,6 +92,7 @@ export const App = () => {
 				<>
 					<h2>⚛️ Wikipedia as a React SPA ⚛️</h2>
 					<PagesList pages={pages} fetchArticle={fetchArticle} />
+					<button onClick={handleAddArticleClick}>Add Article</button>
 				</>
 			)}
 		</main>
